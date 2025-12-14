@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWL Vocabulary - Relax & Learn (Smart Review)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;800&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eef2ff;
+            background-image: radial-gradient(#e0e7ff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        h1, h2, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        
+        /* Animation Classes */
+        .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        .pop { animation: pop 0.3s ease-out; }
+        .pulse-soft { animation: pulseSoft 2s infinite; }
+        
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulseSoft {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #818cf8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-3xl bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative min-h-[600px] flex flex-col">
+        
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+
+        <header class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center relative z-10 flex-shrink-0">
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-wide text-shadow-sm mb-2">
+                <i class="fas fa-graduation-cap mr-2"></i>AWL Vocab Master
+            </h1>
+            <p class="text-indigo-100 text-sm sm:text-base opacity-90">ระบบช่วยจำอัจฉริยะ (Smart Review & Color Coding)</p>
+            
+            <div id="game-stats" class="mt-4 hidden justify-center items-center space-x-4 sm:space-x-8 text-sm font-semibold bg-white/10 p-2 rounded-xl backdrop-blur-md">
+                <div class="flex items-center"><i class="fas fa-star text-yellow-300 mr-2"></i> คะแนน: <span id="score-val" class="ml-1">0</span></div>
+                <div class="flex items-center"><i class="fas fa-fire text-orange-400 mr-2"></i> ต่อเนื่อง: <span id="streak-val" class="ml-1">0</span></div>
+                <div class="flex items-center"><i class="fas fa-list-ol text-blue-300 mr-2"></i> ข้อที่: <span id="progress-val" class="ml-1">0/0</span></div>
+            </div>
+        </header>
+
+        <main class="p-6 sm:p-10 relative z-10 flex-grow flex flex-col justify-center">
+
+            <!-- Mode Selection -->
+            <div id="mode-selection" class="text-center space-y-4">
+                <div class="py-2">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3426/3426653.png" alt="Study" class="w-20 h-20 sm:w-28 sm:h-28 mx-auto mb-4 drop-shadow-lg bounce-in">
+                    <h2 class="text-2xl font-bold text-gray-700 mb-1">เลือกโหมดการเรียนรู้</h2>
+                    <p class="text-gray-500 mb-4 text-sm">เรียนรู้คำศัพท์ 570 คำ พร้อมระบบวิเคราะห์จุดอ่อน</p>
+                    
+                    <div class="grid grid-cols-1 gap-3 max-w-md mx-auto">
+                        <!-- ปุ่มเมนูหลัก -->
+                         <div class="grid grid-cols-2 gap-3">
+                            <button onclick="startOverviewMode()" class="px-4 py-3 bg-white border-2 border-blue-100 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition text-left group">
+                                <h3 class="font-bold text-blue-600 text-sm group-hover:text-blue-700"><i class="fas fa-book mr-1"></i> คลังศัพท์</h3>
+                                <p class="text-[10px] text-gray-400">ดูทั้งหมด 570 คำ</p>
+                            </button>
+
+                            <button onclick="startStatsMode()" class="px-4 py-3 bg-white border-2 border-red-100 rounded-xl shadow-sm hover:shadow-md hover:border-red-400 transition text-left group">
+                                <h3 class="font-bold text-red-500 text-sm group-hover:text-red-600"><i class="fas fa-chart-line mr-1"></i> จุดอ่อนของฉัน</h3>
+                                <p class="text-[10px] text-gray-400">คำที่ผิดบ่อย</p>
+                            </button>
+                        </div>
+
+                        <button onclick="startStudyMode()" class="group relative px-6 py-4 bg-white border-2 border-green-100 rounded-2xl shadow-sm hover:shadow-md hover:border-green-400 transition-all duration-300 text-left w-full">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-green-600 text-lg group-hover:text-green-700">📖 โหมดท่องจำ (Flashcards)</h3>
+                                    <p class="text-xs text-gray-400">ดูบัตรคำศัพท์ ฟังเสียง และจำแนกสีตามประเภทคำ</p>
+                                </div>
+                                <span class="bg-green-100 text-green-600 p-2 rounded-full group-hover:bg-green-600 group-hover:text-white transition-colors">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="startGame(20)" class="group relative px-4 py-4 bg-white border-2 border-indigo-100 rounded-2xl shadow-sm hover:shadow-md hover:border-indigo-400 transition-all duration-300 text-left">
+                                <div>
+                                    <h3 class="font-bold text-indigo-600 text-md group-hover:text-indigo-700">🎮 เกมชุดเล็ก (20)</h3>
+                                    <p class="text-[10px] text-gray-400">ทดสอบเร็ว + แก้ตัว</p>
+                                </div>
+                            </button>
+
+                            <button onclick="startGame(570)" class="group relative px-4 py-4 bg-white border-2 border-purple-100 rounded-2xl shadow-sm hover:shadow-md hover:border-purple-400 transition-all duration-300 text-left">
+                                <div>
+                                    <h3 class="font-bold text-purple-600 text-md group-hover:text-purple-700">🔥 เกมชุดใหญ่</h3>
+                                    <p class="text-[10px] text-gray-400">ท้าทายครบ 570 คำ</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dictionary Overview Area -->
+            <div id="dictionary-area" class="hidden flex flex-col h-[500px]">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-700"><i class="fas fa-book text-blue-500 mr-2"></i>คลังคำศัพท์</h2>
+                    <button onclick="goHome()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <input type="text" id="dict-search" onkeyup="filterDictionary()" placeholder="ค้นหาคำศัพท์..." class="w-full p-3 border rounded-xl mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                
+                <div class="flex-grow overflow-y-auto pr-1" id="dict-list-container">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-white shadow-sm z-10">
+                            <tr>
+                                <th class="p-2 text-sm text-gray-500 font-semibold border-b">Word</th>
+                                <th class="p-2 text-sm text-gray-500 font-semibold border-b">Type</th>
+                                <th class="p-2 text-sm text-gray-500 font-semibold border-b">Meaning</th>
+                                <th class="p-2 border-b"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="dict-table-body" class="text-sm text-gray-700">
+                            <!-- JS will populate rows -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="no-result-msg" class="hidden text-center text-gray-400 mt-4">ไม่พบคำศัพท์ที่ค้นหา</div>
+            </div>
+
+            <!-- Stats/Weakness Area -->
+            <div id="stats-area" class="hidden flex flex-col h-[500px]">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-700"><i class="fas fa-chart-bar text-red-500 mr-2"></i>คำที่ผิดบ่อย</h2>
+                    <button onclick="goHome()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div id="stats-content" class="flex-grow overflow-y-auto">
+                    <!-- JS will populate this -->
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-100 text-center">
+                    <button onclick="clearStats()" class="text-xs text-red-400 hover:text-red-600 underline">ล้างประวัติสถิติ</button>
+                </div>
+            </div>
+
+            <!-- Study Area -->
+            <div id="study-area" class="hidden flex flex-col items-center w-full h-full">
+                <div class="w-full flex justify-between items-center mb-4 text-gray-500 text-sm">
+                    <span id="study-progress">Card 1 / 570</span>
+                    <button onclick="toggleShuffle()" id="shuffle-btn" class="text-indigo-500 hover:text-indigo-700 transition">
+                        <i class="fas fa-random mr-1"></i> สุ่มลำดับ: <span id="shuffle-status">ปิด</span>
+                    </button>
+                </div>
+
+                <div class="perspective-1000 w-full max-w-md h-64 sm:h-80 cursor-pointer group mb-6" onclick="flipCard()">
+                    <div id="flashcard-inner" class="relative w-full h-full text-center transition-transform duration-500 transform-style-3d shadow-xl rounded-2xl">
+                        <!-- Front -->
+                        <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl border-2 border-indigo-50 flex flex-col items-center justify-center p-6">
+                            <div class="text-sm text-gray-400 font-bold uppercase tracking-widest mb-2">Vocabulary</div>
+                            <h2 id="study-word-en" class="text-4xl sm:text-5xl font-bold text-gray-800 mb-2 font-display">Analysis</h2>
+                            <span id="study-word-type" class="px-3 py-1 rounded-full text-sm font-semibold bg-gray-100 text-gray-500 mt-2">(n.)</span>
+                            <div class="text-xs text-gray-400 mt-6 animate-pulse"><i class="fas fa-sync-alt mr-1"></i> แตะเพื่อดูความหมาย</div>
+                        </div>
+                        <!-- Back -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border-2 border-purple-100 flex flex-col items-center justify-center p-6">
+                            <div class="text-sm text-purple-400 font-bold uppercase tracking-widest mb-4">Meaning</div>
+                            <h2 id="study-word-th" class="text-3xl sm:text-4xl font-bold text-indigo-700 mb-6">การวิเคราะห์</h2>
+                            <button onclick="event.stopPropagation(); speakStudyWord()" class="w-14 h-14 rounded-full bg-white text-indigo-500 shadow-md hover:bg-indigo-500 hover:text-white transition flex items-center justify-center transform active:scale-95">
+                                <i class="fas fa-volume-up text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-6 w-full max-w-md">
+                    <button onclick="prevStudyCard()" class="p-4 rounded-full bg-white border border-gray-200 text-gray-600 shadow-sm hover:bg-gray-50 hover:text-indigo-600 transition active:scale-95"><i class="fas fa-arrow-left text-xl"></i></button>
+                    <button onclick="speakCurrentStudyWord()" class="px-6 py-3 rounded-xl bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200 transition flex items-center gap-2"><i class="fas fa-volume-up"></i> ฟังเสียง</button>
+                    <button onclick="nextStudyCard()" class="p-4 rounded-full bg-white border border-gray-200 text-gray-600 shadow-sm hover:bg-gray-50 hover:text-indigo-600 transition active:scale-95"><i class="fas fa-arrow-right text-xl"></i></button>
+                </div>
+                <button onclick="goHome()" class="mt-auto pt-8 text-gray-400 hover:text-gray-600 text-sm underline"><i class="fas fa-home mr-1"></i> กลับหน้าหลัก</button>
+            </div>
+
+            <!-- Game Area -->
+            <div id="game-area" class="hidden flex flex-col items-center">
+                <div class="w-full bg-white rounded-2xl border border-gray-100 shadow-lg p-8 mb-6 text-center relative overflow-hidden transition-all duration-300 hover:shadow-xl">
+                    <button id="speak-btn" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-gray-100 hover:bg-indigo-100 text-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center" title="ฟังเสียงอ่าน"><i class="fas fa-volume-up"></i></button>
+                    <span id="quiz-badge" class="inline-block px-3 py-1 bg-indigo-50 text-indigo-400 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">Quiz Mode</span>
+                    <h2 id="question-text" class="text-4xl sm:text-5xl font-bold text-gray-800 mb-3 font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-gray-800 to-gray-600">Loading...</h2>
+                    <p id="instruction-text" class="text-gray-400 text-lg font-light">...</p>
+                </div>
+
+                <div class="w-full max-w-lg space-y-4">
+                    <div class="relative group">
+                        <input type="text" id="answer-input" class="w-full bg-gray-50 border-2 border-gray-200 text-gray-700 text-xl font-semibold rounded-2xl py-4 px-6 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-inner text-center placeholder-gray-300" placeholder="พิมพ์คำตอบที่นี่..." autocomplete="off">
+                        <div id="status-icon" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-2xl hidden"><i class="fas fa-check-circle text-green-500"></i></div>
+                    </div>
+                    <div class="flex gap-3 justify-center">
+                        <button id="hint-btn" class="flex-1 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 font-bold py-3 px-6 rounded-xl transition-colors shadow-sm active:scale-95"><i class="far fa-lightbulb mr-2"></i> ใบ้คำ</button>
+                        <button id="submit-btn" class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-lg shadow-indigo-200 active:scale-95">ส่งคำตอบ <i class="fas fa-paper-plane ml-2"></i></button>
+                    </div>
+                    <div id="feedback-msg" class="h-8 text-center font-bold text-lg transition-all duration-300 opacity-0 transform translate-y-2"></div>
+                </div>
+                <button onclick="goHome()" class="mt-8 text-gray-400 hover:text-gray-600 text-sm underline"><i class="fas fa-home mr-1"></i> เลิกเล่น</button>
+            </div>
+
+            <!-- Result Area -->
+            <div id="result-area" class="hidden text-center py-8">
+                <div class="mb-6">
+                    <div id="result-icon-container" class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-500 text-5xl shadow-inner">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2 id="result-title" class="text-3xl font-bold text-gray-800">ยอดเยี่ยมมาก!</h2>
+                    <p id="result-subtitle" class="text-gray-500">การฝึกฝนวันนี้เสร็จสิ้นแล้ว</p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm max-w-sm mx-auto mb-8">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center border-r border-gray-100">
+                            <div class="text-sm text-gray-400">คะแนนรวม</div>
+                            <div class="text-3xl font-bold text-indigo-600" id="final-score">0</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-sm text-gray-400">คำที่ผิด</div>
+                            <div class="text-3xl font-bold text-red-500" id="wrong-count">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 justify-center items-center">
+                    <button id="review-mistakes-btn" onclick="startMistakeReview()" class="hidden w-full max-w-xs bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-1 pulse-soft">
+                        <i class="fas fa-tools mr-2"></i> ทบทวนคำที่ตอบผิด
+                    </button>
+                    
+                    <button onclick="goHome()" class="w-full max-w-xs bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-1">
+                        กลับหน้าหลัก <i class="fas fa-home ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Application Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Full Data Set
+        const academicWordList = [
+            // Sublist 1
+            {en: "analysis", th: "การวิเคราะห์", type: "n."}, {en: "approach", th: "แนวทาง / การเข้าหา", type: "n."}, {en: "area", th: "พื้นที่ / ขอบเขต", type: "n."}, {en: "assessment", th: "การประเมินผล", type: "n."}, {en: "assume", th: "สันนิษฐาน / ทึกทักเอา", type: "v."},
+            {en: "authority", th: "อำนาจหน้าที่ / ผู้มีอำนาจ", type: "n."}, {en: "available", th: "ที่มีอยู่ / ที่หามาได้", type: "adj."}, {en: "benefit", th: "ผลประโยชน์", type: "n."}, {en: "concept", th: "แนวคิด / มโนทัศน์", type: "n."}, {en: "consistent", th: "สอดคล้อง / คงเส้นคงวา", type: "adj."},
+            {en: "constitutional", th: "เกี่ยวกับรัฐธรรมนูญ", type: "adj."}, {en: "context", th: "บริบท / สภาพแวดล้อม", type: "n."}, {en: "contract", th: "สัญญา / ข้อตกลง", type: "n."}, {en: "create", th: "สร้างสรรค์", type: "v."}, {en: "data", th: "ข้อมูล", type: "n."},
+            {en: "definition", th: "คำจำกัดความ / นิยาม", type: "n."}, {en: "derived", th: "ได้มาจาก / กลายมาจาก", type: "v."}, {en: "distribution", th: "การกระจาย / การแจกจ่าย", type: "n."}, {en: "economic", th: "เกี่ยวกับเศรษฐกิจ", type: "adj."}, {en: "environment", th: "สิ่งแวดล้อม / สภาวะแวดล้อม", type: "n."},
+            {en: "established", th: "ที่ได้รับการยอมรับ / ที่ถูกก่อตั้ง", type: "v."}, {en: "estimate", th: "ประมาณการ / คาดคะเน", type: "v."}, {en: "evidence", th: "หลักฐาน", type: "n."}, {en: "export", th: "การส่งออก / สินค้าส่งออก", type: "v."}, {en: "factors", th: "ปัจจัย", type: "n."},
+            {en: "financial", th: "เกี่ยวกับการเงิน", type: "adj."}, {en: "formula", th: "สูตร / กฎ", type: "n."}, {en: "function", th: "หน้าที่ / การทำงาน", type: "n."}, {en: "identified", th: "ระบุ / ชี้ตัว", type: "v."}, {en: "income", th: "รายได้", type: "n."},
+            {en: "indicate", th: "แสดงให้เห็น / บ่งชี้", type: "v."}, {en: "individual", th: "แต่ละบุคคล / ปัจเจกชน", type: "n."}, {en: "interpretation", th: "การตีความ", type: "n."}, {en: "involved", th: "ที่เกี่ยวข้อง", type: "v."}, {en: "issues", th: "ประเด็น / ปัญหา", type: "n."},
+            {en: "labour", th: "แรงงาน", type: "n."}, {en: "legal", th: "เกี่ยวกับกฎหมาย", type: "adj."}, {en: "legislation", th: "การออกกฎหมาย / ตัวบทกฎหมาย", type: "n."}, {en: "major", th: "หลัก / สำคัญ", type: "adj."}, {en: "method", th: "วิธีการ", type: "n."},
+            {en: "occur", th: "เกิดขึ้น", type: "v."}, {en: "percent", th: "ร้อยละ / เปอร์เซ็นต์", type: "n."}, {en: "period", th: "ระยะเวลา / ช่วงเวลา", type: "n."}, {en: "policy", th: "นโยบาย", type: "n."}, {en: "principle", th: "หลักการ / กฎเกณฑ์", type: "n."},
+            {en: "procedure", th: "ขั้นตอนการปฏิบัติ / กระบวนการ", type: "n."}, {en: "process", th: "กระบวนการ", type: "n."}, {en: "required", th: "ที่จำเป็น / ที่ต้องทำ", type: "v."}, {en: "research", th: "การวิจัย", type: "n."}, {en: "response", th: "การตอบสนอง", type: "n."},
+            {en: "role", th: "บทบาท", type: "n."}, {en: "section", th: "ส่วน / ภาค", type: "n."}, {en: "sector", th: "ภาคส่วน", type: "n."}, {en: "significant", th: "สำคัญ / มีนัยสำคัญ", type: "adj."}, {en: "similar", th: "คล้ายคลึง", type: "adj."},
+            {en: "source", th: "แหล่งที่มา / ต้นกำเนิด", type: "n."}, {en: "specific", th: "เฉพาะเจาะจง", type: "adj."}, {en: "structure", th: "โครงสร้าง", type: "n."}, {en: "theory", th: "ทฤษฎี", type: "n."}, {en: "variables", th: "ตัวแปร", type: "n."},
+            // Sublist 2
+            {en: "achieve", th: "บรรลุผลสำเร็จ", type: "v."}, {en: "acquisition", th: "การได้มา / การครอบครอง", type: "n."}, {en: "administration", th: "การบริหารจัดการ", type: "n."}, {en: "affect", th: "ส่งผลกระทบ", type: "v."}, {en: "appropriate", th: "เหมาะสม / สมควร", type: "adj."},
+            {en: "aspects", th: "แง่มุม / มุมมอง", type: "n."}, {en: "assistance", th: "ความช่วยเหลือ", type: "n."}, {en: "categories", th: "หมวดหมู่ / ประเภท", type: "n."}, {en: "chapter", th: "บท (หนังสือ) / ตอน", type: "n."}, {en: "commission", th: "คณะกรรมาธิการ / ค่านายหน้า", type: "n."},
+            {en: "community", th: "ชุมชน / สังคม", type: "n."}, {en: "complex", th: "ซับซ้อน", type: "adj."}, {en: "computer", th: "คอมพิวเตอร์", type: "n."}, {en: "conclusion", th: "บทสรุป / ข้อสรุป", type: "n."}, {en: "conduct", th: "ดำเนินการ / ปฏิบัติ", type: "v."},
+            {en: "consequences", th: "ผลที่ตามมา / ผลลัพธ์", type: "n."}, {en: "construction", th: "การก่อสร้าง / โครงสร้าง", type: "n."}, {en: "consumer", th: "ผู้บริโภค", type: "n."}, {en: "credit", th: "สินเชื่อ / ความน่าเชื่อถือ", type: "n."}, {en: "cultural", th: "ทางวัฒนธรรม", type: "adj."},
+            {en: "design", th: "การออกแบบ", type: "n."}, {en: "distinction", th: "ความแตกต่าง / ความเด่น", type: "n."}, {en: "elements", th: "องค์ประกอบ / ธาตุ", type: "n."}, {en: "equation", th: "สมการ", type: "n."}, {en: "evaluation", th: "การประเมินผล", type: "n."},
+            {en: "features", th: "คุณสมบัติ / ลักษณะเด่น", type: "n."}, {en: "final", th: "สุดท้าย / ขั้นสุดท้าย", type: "adj."}, {en: "focus", th: "จุดสนใจ / จุดเน้น", type: "n."}, {en: "impact", th: "ผลกระทบ", type: "n."}, {en: "injury", th: "การบาดเจ็บ", type: "n."},
+            {en: "institute", th: "สถาบัน", type: "n."}, {en: "investment", th: "การลงทุน", type: "n."}, {en: "items", th: "รายการ / ชิ้น", type: "n."}, {en: "journal", th: "วารสารวิชาการ / บันทึก", type: "n."}, {en: "maintenance", th: "การบำรุงรักษา / การธำรงไว้", type: "n."},
+            {en: "normal", th: "ปกติ / ธรรมดา", type: "adj."}, {en: "obtained", th: "ได้รับ", type: "v."}, {en: "participation", th: "การมีส่วนร่วม", type: "n."}, {en: "perceived", th: "รับรู้ / เข้าใจ", type: "v."}, {en: "positive", th: "เชิงบวก / มั่นใจ", type: "adj."},
+            {en: "potential", th: "ศักยภาพ / ความเป็นไปได้", type: "n."}, {en: "previous", th: "ก่อนหน้า / แต่ก่อน", type: "adj."}, {en: "primary", th: "ขั้นปฐมภูมิ / หลัก / สำคัญที่สุด", type: "adj."}, {en: "purchase", th: "ซื้อ / จัดซื้อ", type: "v."}, {en: "range", th: "ช่วง / ขอบเขต", type: "n."},
+            {en: "region", th: "ภูมิภาค / พื้นที่", type: "n."}, {en: "regulations", th: "กฎระเบียบ / ข้อบังคับ", type: "n."}, {en: "relevant", th: "ที่เกี่ยวข้อง / สัมพันธ์กัน", type: "adj."}, {en: "resident", th: "ผู้อยู่อาศัย", type: "n."}, {en: "resources", th: "ทรัพยากร", type: "n."},
+            {en: "restricted", th: "ถูกจำกัด / หวงห้าม", type: "v."}, {en: "security", th: "ความปลอดภัย / ความมั่นคง", type: "n."}, {en: "sought", th: "แสวงหา / ค้นหา (อดีตของ seek)", type: "v."}, {en: "select", th: "คัดเลือก", type: "v."}, {en: "site", th: "สถานที่ตั้ง / ไซต์งาน", type: "n."},
+            {en: "strategies", th: "กลยุทธ์", type: "n."}, {en: "survey", th: "การสำรวจ", type: "n."}, {en: "text", th: "ข้อความ / ตัวบท", type: "n."}, {en: "traditional", th: "ดั้งเดิม / ตามประเพณี", type: "adj."}, {en: "transfer", th: "ถ่ายโอน / ย้าย", type: "v."},
+            // Sublist 3
+            {en: "alternative", th: "ทางเลือก", type: "n."}, {en: "circumstances", th: "สถานการณ์ / แวดล้อม", type: "n."}, {en: "comments", th: "ความคิดเห็น / ข้อติชม", type: "n."}, {en: "compensation", th: "ค่าชดเชย / ค่าตอบแทน", type: "n."}, {en: "components", th: "ส่วนประกอบ", type: "n."},
+            {en: "consent", th: "ความยินยอม", type: "n."}, {en: "considerable", th: "มากมาย / สำคัญ", type: "adj."}, {en: "constant", th: "คงที่ / สม่ำเสมอ", type: "adj."}, {en: "constraints", th: "ข้อจำกัด", type: "n."}, {en: "contribution", th: "การสนับสนุน / การมีส่วนร่วม", type: "n."},
+            {en: "convention", th: "ธรรมเนียมปฏิบัติ / การประชุมใหญ่", type: "n."}, {en: "coordination", th: "การประสานงาน", type: "n."}, {en: "core", th: "แกนหลัก / หัวใจสำคัญ", type: "n."}, {en: "corporate", th: "เกี่ยวกับบริษัท / คณะหมู่", type: "adj."}, {en: "corresponding", th: "ที่สอดคล้องกัน / ที่ตรงกัน", type: "adj."},
+            {en: "criteria", th: "เกณฑ์ / บรรทัดฐาน", type: "n."}, {en: "deduction", th: "การอนุมาน / การหักออก", type: "n."}, {en: "demonstrate", th: "สาธิต / พิสูจน์ให้เห็น", type: "v."}, {en: "document", th: "เอกสาร", type: "n."}, {en: "dominant", th: "ที่ครอบงำ / มีอิทธิพลเหนือ", type: "adj."},
+            {en: "emphasis", th: "การเน้นย้ำ / ความสำคัญ", type: "n."}, {en: "ensure", th: "รับรอง / ทำให้มั่นใจ", type: "v."}, {en: "excluded", th: "ถูกกันออกไป / ไม่รวม", type: "v."}, {en: "framework", th: "กรอบงาน / โครงร่าง", type: "n."}, {en: "funds", th: "กองทุน / เงินทุน", type: "n."},
+            {en: "illustration", th: "ภาพประกอบ / การยกตัวอย่าง", type: "n."}, {en: "immigration", th: "การอพยพเข้าเมือง", type: "n."}, {en: "implies", th: "บ่งบอกถึง / สื่อความหมาย", type: "v."}, {en: "initial", th: "เริ่มแรก / ขั้นต้น", type: "adj."}, {en: "instance", th: "ตัวอย่าง / กรณี", type: "n."},
+            {en: "interaction", th: "การปฏิสัมพันธ์ / การโต้ตอบ", type: "n."}, {en: "justification", th: "การให้เหตุผล / ข้อแก้ตัว", type: "n."}, {en: "layer", th: "ชั้น", type: "n."}, {en: "link", th: "จุดเชื่อมโยง / ลิงก์", type: "n."}, {en: "location", th: "สถานที่ตั้ง / ตำแหน่ง", type: "n."},
+            {en: "maximum", th: "สูงสุด", type: "adj."}, {en: "minorities", th: "ชนกลุ่มน้อย", type: "n."}, {en: "negative", th: "เชิงลบ / ทางลบ", type: "adj."}, {en: "outcomes", th: "ผลลัพธ์", type: "n."}, {en: "partnership", th: "ห้างหุ้นส่วน / พันธมิตร", type: "n."},
+            {en: "philosophy", th: "ปรัชญา", type: "n."}, {en: "physical", th: "ทางกายภาพ / เกี่ยวกับร่างกาย", type: "adj."}, {en: "proportion", th: "สัดส่วน", type: "n."}, {en: "published", th: "ตีพิมพ์ / เผยแพร่", type: "v."}, {en: "reaction", th: "ปฏิกิริยา / การตอบสนอง", type: "n."},
+            {en: "registered", th: "ลงทะเบียน", type: "v."}, {en: "reliance", th: "ความไว้วางใจ / การพึ่งพา", type: "n."}, {en: "removed", th: "ถูกลบออก / ถูกย้าย", type: "v."}, {en: "scheme", th: "แผนการ / โครงการ", type: "n."}, {en: "sequence", th: "ลำดับ / อนุกรม", type: "n."},
+            {en: "sex", th: "เพศ", type: "n."}, {en: "shift", th: "เปลี่ยนแปลง / เคลื่อนย้าย / กะการทำงาน", type: "v."}, {en: "specified", th: "ระบุ / กำหนด", type: "v."}, {en: "sufficient", th: "เพียงพอ", type: "adj."}, {en: "task", th: "ภารกิจ / งาน", type: "n."},
+            {en: "technical", th: "ทางเทคนิค", type: "adj."}, {en: "techniques", th: "เทคนิค / กลวิธี", type: "n."}, {en: "technology", th: "เทคโนโลยี", type: "n."}, {en: "validity", th: "ความถูกต้อง / ความสมเหตุสมผล", type: "n."}, {en: "volume", th: "ปริมาตร / ปริมาณ", type: "n."},
+            // Sublist 4
+            {en: "access", th: "การเข้าถึง / ทางเข้า", type: "n."}, {en: "adequate", th: "เพียงพอ / เหมาะสม", type: "adj."}, {en: "annual", th: "ประจำปี / รายปี", type: "adj."}, {en: "apparent", th: "ชัดเจน / เห็นได้ชัด", type: "adj."}, {en: "approximated", th: "ประมาณ", type: "v."},
+            {en: "attitudes", th: "ทัศนคติ", type: "n."}, {en: "attributed", th: "ถือว่าเป็นของ / อ้างถึง", type: "v."}, {en: "civil", th: "เกี่ยวกับพลเมือง / แพ่ง", type: "adj."}, {en: "code", th: "รหัส / ประมวลกฎหมาย", type: "n."}, {en: "commitment", th: "ความมุ่งมั่น / พันธสัญญา", type: "n."},
+            {en: "communication", th: "การสื่อสาร", type: "n."}, {en: "concentration", th: "ความเข้มข้น / สมาธิ", type: "n."}, {en: "conference", th: "การประชุมสัมมนา", type: "n."}, {en: "contrast", th: "ความแตกต่าง / การเปรียบเทียบ", type: "n."}, {en: "cycle", th: "วงจร / วัฏจักร", type: "n."},
+            {en: "debate", th: "การโต้วาที / การถกเถียง", type: "n."}, {en: "despite", th: "แม้ว่า / ทั้งๆ ที่", type: "prep."}, {en: "dimensions", th: "มิติ / ขนาด", type: "n."}, {en: "domestic", th: "ภายในประเทศ / เกี่ยวกับครัวเรือน", type: "adj."}, {en: "emerged", th: "ปรากฏขึ้น / อุบัติขึ้น", type: "v."}, {en: "error", th: "ข้อผิดพลาด", type: "n."}, {en: "ethnic", th: "ทางชาติพันธุ์", type: "adj."}, {en: "goals", th: "เป้าหมาย", type: "n."}, {en: "granted", th: "ยินยอม / อนุญาต", type: "v."}, {en: "hence", th: "ดังนั้น / ด้วยเหตุนี้", type: "adv."},
+            {en: "hypothesis", th: "สมมติฐาน", type: "n."}, {en: "implementation", th: "การนำไปปฏิบัติ / การดำเนินการ", type: "n."}, {en: "implications", th: "ความนัย / ผลที่อาจเกิดขึ้น", type: "n."}, {en: "imposed", th: "กำหนด / บังคับใช้", type: "v."}, {en: "integration", th: "การบูรณาการ / การรวมเข้าด้วยกัน", type: "n."},
+            {en: "internal", th: "ภายใน", type: "adj."}, {en: "investigation", th: "การสืบสวนสอบสวน", type: "n."}, {en: "job", th: "งาน / อาชีพ", type: "n."}, {en: "label", th: "ฉลาก / ป้ายระบุ", type: "n."}, {en: "mechanism", th: "กลไก", type: "n."},
+            {en: "obvious", th: "ชัดเจน / เห็นได้ชัด", type: "adj."}, {en: "occupational", th: "เกี่ยวกับอาชีพ", type: "adj."}, {en: "option", th: "ทางเลือก", type: "n."}, {en: "output", th: "ผลผลิต / ข้อมูลส่งออก", type: "n."}, {en: "overall", th: "โดยรวม / ทั้งหมด", type: "adj."},
+            {en: "parallel", th: "ขนาน / เทียบเคียง", type: "adj."}, {en: "parameters", th: "พารามิเตอร์ / ตัวแปรที่กำหนด", type: "n."}, {en: "phase", th: "ระยะ / ขั้นตอน", type: "n."}, {en: "predicted", th: "ทำนาย / คาดการณ์", type: "v."}, {en: "principal", th: "สำคัญที่สุด / ครูใหญ่", type: "adj."},
+            {en: "prior", th: "ก่อน / ที่มีมาก่อน", type: "adj."}, {en: "professional", th: "มืออาชีพ / ทางวิชาชีพ", type: "adj."}, {en: "project", th: "โครงการ", type: "n."}, {en: "promote", th: "ส่งเสริม / เลื่อนตำแหน่ง", type: "v."}, {en: "regime", th: "ระบอบการปกครอง", type: "n."},
+            {en: "resolution", th: "มติ / ความละเอียดภาพ / การแก้ปัญหา", type: "n."}, {en: "retained", th: "เก็บรักษาไว้ / จดจำ", type: "v."}, {en: "series", th: "ชุด / อนุกรม", type: "n."}, {en: "statistics", th: "สถิติ", type: "n."}, {en: "status", th: "สถานะ / สถานภาพ", type: "n."},
+            {en: "stress", th: "ความเครียด / การเน้นเสียง", type: "n."}, {en: "subsequent", th: "ซึ่งตามมาภายหลัง", type: "adj."}, {en: "sum", th: "ผลรวม / ยอดรวม", type: "n."}, {en: "summary", th: "บทสรุป", type: "n."}, {en: "undertaken", th: "รับภาระ / ดำเนินการ", type: "v."},
+            // Sublist 5
+            {en: "academy", th: "สถาบันการศึกษา / สถานศึกษา", type: "n."}, {en: "adjustment", th: "การปรับเปลี่ยน / การปรับตัว", type: "n."}, {en: "alter", th: "เปลี่ยนแปลง / แก้ไข", type: "v."}, {en: "amendment", th: "การแก้ไข (กฎหมาย)", type: "n."}, {en: "aware", th: "ตระหนัก / รับรู้", type: "adj."},
+            {en: "capacity", th: "ความจุ / ขีดความสามารถ", type: "n."}, {en: "challenge", th: "ความท้าทาย", type: "n."}, {en: "clause", th: "อนุประโยค / มาตรา", type: "n."}, {en: "compounds", th: "สารประกอบ", type: "n."}, {en: "conflict", th: "ความขัดแย้ง", type: "n."},
+            {en: "consultation", th: "การปรึกษาหารือ", type: "n."}, {en: "contact", th: "การติดต่อ / การสัมผัส", type: "n."}, {en: "declined", th: "ลดลง / ปฏิเสธ", type: "v."}, {en: "discretion", th: "ดุลยพินิจ", type: "n."}, {en: "draft", th: "ฉบับร่าง / การเกณฑ์ทหาร", type: "n."},
+            {en: "enable", th: "ทำให้สามารถ / เปิดใช้งาน", type: "v."}, {en: "energy", th: "พลังงาน", type: "n."}, {en: "enforcement", th: "การบังคับใช้", type: "n."}, {en: "entities", th: "หน่วยงาน / เอกลักษณ์", type: "n."}, {en: "equivalent", th: "เท่าเทียมกัน / สมมูล", type: "adj."},
+            {en: "evolution", th: "วิวัฒนาการ", type: "n."}, {en: "expansion", th: "การขยายตัว", type: "n."}, {en: "exposure", th: "การสัมผัส / การเปิดรับ", type: "n."}, {en: "external", th: "ภายนอก", type: "adj."}, {en: "facilitate", th: "อำนวยความสะดวก", type: "v."},
+            {en: "fundamental", th: "พื้นฐาน / รากฐาน", type: "adj."}, {en: "generated", th: "สร้างขึ้น / ผลิต", type: "v."}, {en: "generation", th: "รุ่น / การกำเนิด", type: "n."}, {en: "image", th: "ภาพลักษณ์ / รูปภาพ", type: "n."}, {en: "liberal", th: "เสรีนิยม", type: "adj."},
+            {en: "licence", th: "ใบอนุญาต", type: "n."}, {en: "logic", th: "ตรรกะ / เหตุผล", type: "n."}, {en: "margin", th: "ขอบ / ส่วนต่าง", type: "n."}, {en: "medical", th: "ทางการแพทย์", type: "adj."}, {en: "mental", th: "ทางจิตใจ / เกี่ยวกับความคิด", type: "adj."},
+            {en: "modified", th: "ดัดแปลง / แก้ไข", type: "v."}, {en: "monitoring", th: "การตรวจสอบ / การเฝ้าสังเกต", type: "n."}, {en: "network", th: "เครือข่าย", type: "n."}, {en: "notion", th: "แนวคิด / ความเชื่อ", type: "n."}, {en: "objective", th: "วัตถุประสงค์ / ภววิสัย", type: "n."},
+            {en: "orientation", th: "การปฐมนิเทศ / ทิศทาง", type: "n."}, {en: "perspective", th: "มุมมอง / ทัศนคติ", type: "n."}, {en: "precise", th: "แม่นยำ / เที่ยงตรง", type: "adj."}, {en: "prime", th: "สำคัญ / ชั้นเยี่ยม", type: "adj."}, {en: "psychology", th: "จิตวิทยา", type: "n."},
+            {en: "pursue", th: "ไล่ตาม / ดำเนินการต่อ", type: "v."}, {en: "ratio", th: "อัตราส่วน", type: "n."}, {en: "rejected", th: "ปฏิเสธ / ไม่ยอมรับ", type: "v."}, {en: "revenue", th: "รายได้ / ภาษีอากร", type: "n."}, {en: "stability", th: "ความมั่นคง / เสถียรภาพ", type: "n."},
+            {en: "styles", th: "รูปแบบ / สไตล์", type: "n."}, {en: "substitution", th: "การแทนที่ / การสับเปลี่ยน", type: "n."}, {en: "sustainable", th: "ยั่งยืน / ถาวร", type: "adj."}, {en: "symbolic", th: "เป็นสัญลักษณ์", type: "adj."}, {en: "target", th: "เป้าหมาย", type: "n."},
+            {en: "transition", th: "การเปลี่ยนผ่าน", type: "n."}, {en: "trend", th: "แนวโน้ม / กระแส", type: "n."}, {en: "version", th: "รุ่น / ฉบับ", type: "n."}, {en: "welfare", th: "สวัสดิการ / ความเป็นอยู่ที่ดี", type: "n."}, {en: "whereas", th: "ในขณะที่ / แต่ทว่า", type: "conj."},
+            // Sublist 6
+            {en: "abstract", th: "นามธรรม / บทคัดย่อ", type: "adj."}, {en: "accurate", th: "แม่นยำ / ถูกต้อง", type: "adj."}, {en: "acknowledged", th: "ยอมรับ / รับทราบ", type: "v."}, {en: "aggregate", th: "ผลรวม / ยอดรวม", type: "n."}, {en: "allocation", th: "การจัดสรร / การแบ่งส่วน", type: "n."},
+            {en: "assigned", th: "มอบหมาย / แต่งตั้ง", type: "v."}, {en: "attached", th: "แนบ / ติดกัน", type: "v."}, {en: "authors", th: "ผู้เขียน / ผู้ประพันธ์", type: "n."}, {en: "bond", th: "พันธะ / ข้อผูกมัด", type: "n."}, {en: "brief", th: "สั้นๆ / รวบรัด", type: "adj."},
+            {en: "capable", th: "สามารถ / มีฝีมือ", type: "adj."}, {en: "cited", th: "อ้างถึง / กล่าวอ้าง", type: "v."}, {en: "cooperative", th: "ร่วมมือ / สหกรณ์", type: "adj."}, {en: "discrimination", th: "การเลือกปฏิบัติ / การแบ่งแยก", type: "n."}, {en: "display", th: "แสดง / นำเสนอ", type: "v."},
+            {en: "diversity", th: "ความหลากหลาย", type: "n."}, {en: "domain", th: "โดเมน / ขอบเขต / อาณาจักร", type: "n."}, {en: "edition", th: "ฉบับพิมพ์ / รุ่น", type: "n."}, {en: "enhanced", th: "ปรับปรุง / เสริม", type: "v."}, {en: "estate", th: "อสังหาริมทรัพย์ / ที่ดิน", type: "n."},
+            {en: "exceed", th: "เกิน / มากกว่า", type: "v."}, {en: "expert", th: "ผู้เชี่ยวชาญ", type: "n."}, {en: "explicit", th: "ชัดเจน / เปิดเผย", type: "adj."}, {en: "federal", th: "เกี่ยวกับสหพันธรัฐ", type: "adj."}, {en: "fees", th: "ค่าธรรมเนียม", type: "n."},
+            {en: "flexibility", th: "ความยืดหยุ่น", type: "n."}, {en: "furthermore", th: "ยิ่งไปกว่านั้น / นอกจากนี้", type: "adv."}, {en: "gender", th: "เพศ / เพศสภาพ", type: "n."}, {en: "ignored", th: "เพิกเฉย / ละเลย", type: "v."}, {en: "incentive", th: "สิ่งจูงใจ / แรงกระตุ้น", type: "n."},
+            {en: "incidence", th: "อุบัติการณ์ / อัตราการเกิด", type: "n."}, {en: "incorporated", th: "รวมเข้าด้วยกัน / จดทะเบียนบริษัท", type: "v."}, {en: "index", th: "ดัชนี / สารบัญ", type: "n."}, {en: "inhibition", th: "การยับยั้ง / ความเขินอาย", type: "n."}, {en: "initiatives", th: "ความคิดริเริ่ม", type: "n."},
+            {en: "input", th: "ข้อมูลนำเข้า / ปัจจัยนำเข้า", type: "n."}, {en: "instructions", th: "คำแนะนำ / คำสั่ง", type: "n."}, {en: "intelligence", th: "สติปัญญา / ข่าวกรอง", type: "n."}, {en: "interval", th: "ช่วงเวลา / ระยะห่าง", type: "n."}, {en: "lecture", th: "การบรรยาย / ปาฐกถา", type: "n."},
+            {en: "migration", th: "การอพยพย้ายถิ่น", type: "n."}, {en: "minimum", th: "ขั้นต่ำ / น้อยที่สุด", type: "n."}, {en: "ministry", th: "กระทรวง / คณะรัฐมนตรี", type: "n."}, {en: "motivation", th: "แรงจูงใจ", type: "n."}, {en: "neutral", th: "เป็นกลาง", type: "adj."},
+            {en: "nevertheless", th: "แต่อย่างไรก็ตาม / ถึงกระนั้น", type: "adv."}, {en: "overseas", th: "ต่างประเทศ / ข้ามทะเล", type: "adj."}, {en: "preceding", th: "ก่อนหน้า / ที่มาก่อน", type: "adj."}, {en: "presumption", th: "การสันนิษฐาน / ข้อสมมติ", type: "n."}, {en: "rational", th: "สมเหตุสมผล / มีเหตุผล", type: "adj."},
+            {en: "recovery", th: "การฟื้นตัว / การกู้คืน", type: "n."}, {en: "revealed", th: "เปิดเผย / แสดงให้เห็น", type: "v."}, {en: "scope", th: "ขอบเขต / วิสัยทัศน์", type: "n."}, {en: "subsidiary", th: "บริษัทในเครือ / เป็นรอง", type: "n."}, {en: "tapes", th: "เทปบันทึก / แถบกาว", type: "n."},
+            {en: "trace", th: "ร่องรอย / ติดตามหา", type: "v."}, {en: "transformation", th: "การเปลี่ยนแปลงรูปโฉม / การแปรรูป", type: "n."}, {en: "transport", th: "การขนส่ง / คมนาคม", type: "n."}, {en: "underlying", th: "ที่เป็นพื้นฐาน / ที่ซ่อนอยู่", type: "adj."}, {en: "utility", th: "สาธารณูปโภค / ประโยชน์ใช้สอย", type: "n."},
+            // Sublist 7
+            {en: "adaptation", th: "การปรับตัว / การดัดแปลง", type: "n."}, {en: "adults", th: "ผู้ใหญ่", type: "n."}, {en: "advocate", th: "ผู้สนับสนุน / ทนายความ", type: "n."}, {en: "aid", th: "ความช่วยเหลือ / การสงเคราะห์", type: "n."}, {en: "channel", th: "ช่องทาง / สถานี", type: "n."},
+            {en: "chemical", th: "ทางเคมี / สารเคมี", type: "adj."}, {en: "classical", th: "คลาสสิก / แบบดั้งเดิม", type: "adj."}, {en: "comprehensive", th: "ครอบคลุม / ถ้วนทั่ว", type: "adj."}, {en: "comprise", th: "ประกอบด้วย", type: "v."}, {en: "confirmed", th: "ยืนยัน", type: "v."},
+            {en: "contrary", th: "ตรงกันข้าม / ขัดแย้ง", type: "adj."}, {en: "converted", th: "แปลง / เปลี่ยนความเชื่อ", type: "v."}, {en: "couple", th: "คู่ / คู่สามีภรรยา", type: "n."}, {en: "decades", th: "ทศวรรษ (10 ปี)", type: "n."}, {en: "definite", th: "แน่นอน / ชัดเจน", type: "adj."},
+            {en: "deny", th: "ปฏิเสธ / ไม่ยอมรับ", type: "v."}, {en: "differentiation", th: "ความแตกต่าง / การจำแนก", type: "n."}, {en: "disposal", th: "การกำจัด / การจัดการ", type: "n."}, {en: "dynamic", th: "พลวัต / มีพลัง", type: "adj."}, {en: "elimination", th: "การกำจัด / การขจัดออก", type: "n."},
+            {en: "empirical", th: "เชิงประจักษ์ / ซึ่งได้จากประสบการณ์", type: "adj."}, {en: "equipment", th: "อุปกรณ์ / เครื่องมือ", type: "n."}, {en: "extract", th: "สกัด / ถอน", type: "v."}, {en: "file", th: "ไฟล์ / แฟ้มข้อมูล", type: "n."}, {en: "finite", th: "จำกัด / มีขอบเขต", type: "adj."},
+            {en: "foundation", th: "พื้นฐาน / รากฐาน / มูลนิธิ", type: "n."}, {en: "global", th: "ระดับโลก / ทั่วโลก", type: "adj."}, {en: "grade", th: "เกรด / ระดับชั้น / คุณภาพ", type: "n."}, {en: "guarantee", th: "การรับประกัน / หลักประกัน", type: "n."}, {en: "hierarchical", th: "ตามลำดับชั้น", type: "adj."},
+            {en: "identical", th: "เหมือนกันทุกประการ", type: "adj."}, {en: "ideology", th: "อุดมการณ์", type: "n."}, {en: "inferred", th: "สรุป / อนุมาน", type: "v."}, {en: "innovation", th: "นวัตกรรม", type: "n."}, {en: "insert", th: "แทรก / ใส่เข้า", type: "v."},
+            {en: "intervention", th: "การแทรกแซง / การยื่นมือเข้ามาช่วย", type: "n."}, {en: "isolated", th: "โดดเดี่ยว / แยกตัวออก", type: "adj."}, {en: "media", th: "สื่อ / สื่อมวลชน", type: "n."}, {en: "mode", th: "โหมด / รูปแบบ / วิธีการ", type: "n."}, {en: "paradigm", th: "กรอบความคิด / แบบอย่าง", type: "n."},
+            {en: "phenomenon", th: "ปรากฏการณ์", type: "n."}, {en: "priority", th: "ลำดับความสำคัญ / สิทธิพิเศษ", type: "n."}, {en: "prohibited", th: "ต้องห้าม / ไม่อนุญาต", type: "v."}, {en: "publication", th: "สิ่งพิมพ์ / การตีพิมพ์", type: "n."}, {en: "quotation", th: "การอ้างอิง / ใบเสนอราคา", type: "n."},
+            {en: "release", th: "ปล่อย / ปลดปล่อย / ออกวางจำหน่าย", type: "v."}, {en: "reverse", th: "ย้อนกลับ / กลับด้าน", type: "v."}, {en: "simulation", th: "การจำลองสถานการณ์", type: "n."}, {en: "solely", th: "เพียงอย่างเดียว / โดยลำพัง", type: "adv."}, {en: "somewhat", th: "ค่อนข้าง / บางส่วน", type: "adv."},
+            {en: "submitted", th: "ส่ง / ยื่นเสนอ", type: "v."}, {en: "successive", th: "ต่อเนื่อง / ตามลำดับ", type: "adj."}, {en: "survive", th: "รอดชีวิต / อยู่รอด", type: "v."}, {en: "thesis", th: "วิทยานิพนธ์ / ข้อสมมติ", type: "n."}, {en: "topic", th: "หัวข้อ / ญัตติ", type: "n."},
+            {en: "transmission", th: "การส่งผ่าน / การถ่ายทอด", type: "n."}, {en: "ultimately", th: "ในที่สุด / ท้ายที่สุด", type: "adv."}, {en: "unique", th: "เป็นเอกลักษณ์ / หนึ่งเดียว", type: "adj."}, {en: "visible", th: "มองเห็นได้ / ชัดแจ้ง", type: "adj."}, {en: "voluntary", th: "โดยสมัครใจ / อาสาสมัคร", type: "adj."},
+            // Sublist 8
+            {en: "abandon", th: "ละทิ้ง / ปล่อยปละละเลย", type: "v."}, {en: "accompanied", th: "มาพร้อมกับ / ติดตาม", type: "v."}, {en: "accumulation", th: "การสะสม / การพอกพูน", type: "n."}, {en: "ambiguous", th: "กำกวม / คลุมเครือ", type: "adj."}, {en: "appendix", th: "ภาคผนวก / ไส้ติ่ง", type: "n."},
+            {en: "appreciation", th: "ความซาบซึ้ง / การเห็นคุณค่า", type: "n."}, {en: "arbitrary", th: "ตามอำเภอใจ / โดยพลการ", type: "adj."}, {en: "automatically", th: "โดยอัตโนมัติ", type: "adv."}, {en: "bias", th: "อคติ / ความลำเอียง", type: "n."}, {en: "chart", th: "แผนภูมิ / ตาราง", type: "n."},
+            {en: "clarity", th: "ความชัดเจน", type: "n."}, {en: "conformity", th: "ความสอดคล้อง / การปฏิบัติตาม", type: "n."}, {en: "commodity", th: "สินค้าโภคภัณฑ์", type: "n."}, {en: "complement", th: "ส่วนเติมเต็ม / องค์ประกอบที่ทำให้สมบูรณ์", type: "n."}, {en: "contemporary", th: "ร่วมสมัย", type: "adj."},
+            {en: "contradiction", th: "ความขัดแย้ง / การโต้แย้ง", type: "n."}, {en: "crucial", th: "สำคัญมาก / วิกฤต", type: "adj."}, {en: "currency", th: "สกุลเงิน / เงินตรา", type: "n."}, {en: "denote", th: "หมายถึง / แสดงถึง", type: "v."}, {en: "detected", th: "ตรวจพบ / สืบหา", type: "v."},
+            {en: "deviation", th: "การเบี่ยงเบน / ความคลาดเคลื่อน", type: "n."}, {en: "displacement", th: "การกระจัด / การย้ายที่", type: "n."}, {en: "dramatic", th: "น่าทึ่ง / เร้าอารมณ์ / เกี่ยวกับการละคร", type: "adj."}, {en: "eventually", th: "ในที่สุด / ปลายทาง", type: "adv."}, {en: "exhibit", th: "จัดแสดง / แสดงให้เห็น", type: "v."},
+            {en: "exploitation", th: "การแสวงหาผลประโยชน์ / การกดขี่", type: "n."}, {en: "fluctuation", th: "ความผันผวน / การขึ้นลง", type: "n."}, {en: "guidelines", th: "แนวทางปฏิบัติ / เกณฑ์", type: "n."}, {en: "highlighted", th: "เน้น / ทำให้เด่น", type: "v."}, {en: "implicit", th: "โดยนัย / แฝงอยู่", type: "adj."},
+            {en: "induced", th: "ชักนำ / เหนี่ยวนำ", type: "v."}, {en: "inevitably", th: "อย่างหลีกเลี่ยงไม่ได้ / จำต้อง", type: "adv."}, {en: "infrastructure", th: "โครงสร้างพื้นฐาน / สาธารณูปโภค", type: "n."}, {en: "inspection", th: "การตรวจสอบ / การตรวจตรา", type: "n."}, {en: "intensity", th: "ความเข้มข้น / ความรุนแรง", type: "n."},
+            {en: "manipulation", th: "การจัดการ (มักในทางลบ) / การควบคุม", type: "n."}, {en: "minimise", th: "ลดให้เหลือน้อยที่สุด", type: "v."}, {en: "nuclear", th: "นิวเคลียร์ / นิวเคลียส", type: "adj."}, {en: "offset", th: "ชดเชย / หักลบ", type: "v."}, {en: "paragraph", th: "ย่อหน้า", type: "n."},
+            {en: "plus", th: "บวก / เพิ่มเติม", type: "prep."}, {en: "practitioners", th: "ผู้ปฏิบัติงาน / แพทย์", type: "n."}, {en: "predominantly", th: "ส่วนใหญ่ / โดยมาก", type: "adv."}, {en: "prospect", th: "โอกาส / ความหวัง", type: "n."}, {en: "radical", th: "รุนแรง / ถอนรากถอนโคน / หัวรุนแรง", type: "adj."},
+            {en: "random", th: "สุ่ม / ตามบุญตามกรรม", type: "adj."}, {en: "reinforced", th: "เสริมแรง / สนับสนุน", type: "v."}, {en: "restore", th: "ฟื้นฟู / ซ่อมแซม", type: "v."}, {en: "revision", th: "การแก้ไข / การทบทวน", type: "n."}, {en: "schedule", th: "ตารางเวลา / กำหนดการ", type: "n."},
+            {en: "tension", th: "ความตึงเครียด", type: "n."}, {en: "termination", th: "การสิ้นสุด / การยุติ", type: "n."}, {en: "theme", th: "ประเด็นหลัก / ธีม", type: "n."}, {en: "thereby", th: "ดังนั้น / ด้วยเหตุนั้น", type: "adv."}, {en: "uniform", th: "สม่ำเสมอ / เครื่องแบบ", type: "adj."},
+            {en: "vehicle", th: "ยานพาหนะ / สื่อกลาง", type: "n."}, {en: "via", th: "ผ่านทาง / โดยทาง", type: "prep."}, {en: "virtually", th: "เกือบจะ / เสมือนจริง", type: "adv."}, {en: "widespread", th: "แพร่หลาย / กว้างขวาง", type: "adj."}, {en: "visual", th: "ทางสายตา / เกี่ยวกับการมองเห็น", type: "adj."},
+            // Sublist 9
+            {en: "accommodation", th: "ที่พัก / การปรับตัว", type: "n."}, {en: "analogous", th: "คล้ายคลึงกัน / อุปมาเหมือน", type: "adj."}, {en: "anticipate", th: "คาดการณ์ / มุ่งหวัง", type: "v."}, {en: "assurance", th: "การรับประกัน / ความเชื่อมั่น", type: "n."}, {en: "attained", th: "บรรลุ / ได้มา", type: "v."},
+            {en: "behalf", th: "ในนามของ / ตัวแทน", type: "n."}, {en: "bulk", th: "ปริมาณมาก / ส่วนใหญ่", type: "n."}, {en: "ceases", th: "หยุด / ยุติ", type: "v."}, {en: "coherence", th: "ความเชื่อมโยง / ความสอดคล้อง", type: "n."}, {en: "coincide", th: "เกิดขึ้นพร้อมกัน / พ้องกัน", type: "v."},
+            {en: "commenced", th: "เริ่ม / ตั้งต้น", type: "v."}, {en: "incompatible", th: "เข้ากันไม่ได้ / ขัดแย้งกัน", type: "adj."}, {en: "concurrent", th: "เกิดขึ้นพร้อมกัน", type: "adj."}, {en: "confined", th: "จำกัด / ตีวง", type: "v."}, {en: "controversy", th: "การโต้เถียง / วิวาทะ", type: "n."},
+            {en: "conversely", th: "ในทางกลับกัน", type: "adv."}, {en: "device", th: "อุปกรณ์ / เครื่องมือ", type: "n."}, {en: "devoted", th: "อุทิศ / ทุ่มเท", type: "v."}, {en: "diminished", th: "ลดลง / น้อยลง", type: "v."}, {en: "distortion", th: "การบิดเบือน / ความผิดเพี้ยน", type: "n."},
+            {en: "duration", th: "ระยะเวลา / ช่วงเวลา", type: "n."}, {en: "erosion", th: "การกัดเซาะ / การสึกกร่อน", type: "n."}, {en: "ethical", th: "ทางจริยธรรม / ศีลธรรม", type: "adj."}, {en: "format", th: "รูปแบบ / ฟอร์แมต", type: "n."}, {en: "founded", th: "ก่อตั้ง / สถาปนา", type: "v."},
+            {en: "inherent", th: "ที่มีอยู่ตามธรรมชาติ / โดยสันดาน", type: "adj."}, {en: "insight", th: "ข้อมูลเชิงลึก / ความเข้าใจลึกซึ้ง", type: "n."}, {en: "integral", th: "สำคัญ / เป็นส่วนประกอบหลัก", type: "adj."}, {en: "intermediate", th: "ระดับกลาง / ปานกลาง", type: "adj."}, {en: "manual", th: "คู่มือ / ทำด้วยมือ", type: "n."},
+            {en: "mature", th: "เติบโตเต็มที่ / วุฒิภาวะ", type: "adj."}, {en: "mediation", th: "การไกล่เกลี่ย", type: "n."}, {en: "medium", th: "สื่อกลาง / ปานกลาง", type: "n."}, {en: "military", th: "ทางทหาร", type: "adj."}, {en: "minimal", th: "น้อยที่สุด / ขั้นต่ำ", type: "adj."},
+            {en: "mutual", th: "ร่วมกัน / ซึ่งกันและกัน", type: "adj."}, {en: "norms", th: "บรรทัดฐาน / มาตรฐาน", type: "n."}, {en: "overlap", th: "ทับซ้อน / คาบเกี่ยว", type: "v."}, {en: "passive", th: "เฉื่อย / ถูกกระทำ", type: "adj."}, {en: "portion", th: "ส่วน / สัดส่วน", type: "n."},
+            {en: "preliminary", th: "เบื้องต้น / ขั้นต้น", type: "adj."}, {en: "protocol", th: "ระเบียบการ / พิธีการทูต", type: "n."}, {en: "qualitative", th: "เชิงคุณภาพ", type: "adj."}, {en: "refine", th: "ทำให้บริสุทธิ์ / ปรับปรุงให้ดีขึ้น", type: "v."}, {en: "relaxed", th: "ผ่อนคลาย", type: "adj."},
+            {en: "restraints", th: "ข้อจำกัด / การยับยั้ง", type: "n."}, {en: "revolution", th: "การปฏิวัติ", type: "n."}, {en: "rigid", th: "แข็ง / เข้มงวด", type: "adj."}, {en: "route", th: "เส้นทาง", type: "n."}, {en: "scenario", th: "สถานการณ์ / บทภาพยนตร์", type: "n."},
+            {en: "sphere", th: "ทรงกลม / ขอบเขต", type: "n."}, {en: "subordinate", th: "ผู้ใต้บังคับบัญชา / รองลงมา", type: "adj."}, {en: "supplementary", th: "เสริม / เพิ่มเติม", type: "adj."}, {en: "suspended", th: "ถูกระงับ / แขวน", type: "v."}, {en: "team", th: "ทีม / คณะทำงาน", type: "n."},
+            {en: "temporary", th: "ชั่วคราว", type: "adj."}, {en: "trigger", th: "กระตุ้น / ไกปืน", type: "v."}, {en: "unified", th: "เป็นหนึ่งเดียว / รวมกัน", type: "v."}, {en: "violation", th: "การฝ่าฝืน / การละเมิด", type: "n."}, {en: "vision", th: "วิสัยทัศน์ / การมองเห็น", type: "n."},
+            // Sublist 10
+            {en: "adjacent", th: "ติดกัน / ประชิด", type: "adj."}, {en: "albeit", th: "แม้ว่า / ถึงแม้", type: "conj."}, {en: "assembly", th: "การประกอบ / การชุมนุม / สมัชชา", type: "n."}, {en: "collapse", th: "พังทลาย / ล่มสลาย", type: "v."}, {en: "colleagues", th: "เพื่อนร่วมงาน", type: "n."}, {en: "compiled", th: "รวบรวม / เรียบเรียง", type: "v."}, {en: "conceived", th: "ตั้งครรภ์ / คิดขึ้น / จินตนาการ", type: "v."}, {en: "convinced", th: "เชื่อมั่น / มั่นใจ", type: "v."}, {en: "depression", th: "ความซึมเศร้า / ภาวะเศรษฐกิจตกต่ำ", type: "n."}, {en: "encountered", th: "เผชิญหน้า / ประสบพบเจอ", type: "v."},
+            {en: "enormous", th: "มหาศาล / ใหญ่โต", type: "adj."}, {en: "forthcoming", th: "กำลังจะมาถึง / พร้อมให้ข้อมูล", type: "adj."}, {en: "inclination", th: "ความโน้มเอียง / ความลาดเอียง", type: "n."}, {en: "integrity", th: "ความซื่อสัตย์ / ความสมบูรณ์", type: "n."}, {en: "intrinsic", th: "ที่อยู่ภายใน / โดยเนื้อแท้", type: "adj."},
+            {en: "invoked", th: "อ้างถึง / วิงวอน / เรียกใช้", type: "v."}, {en: "levy", th: "การเก็บภาษี / การเกณฑ์", type: "n."}, {en: "likewise", th: "เช่นเดียวกัน / ทำนองเดียวกัน", type: "adv."}, {en: "nonetheless", th: "อย่างไรก็ตาม / ถึงกระนั้น", type: "adv."}, {en: "notwithstanding", th: "แม้ว่า / ทั้งๆ ที่", type: "prep."},
+            {en: "odd", th: "แปลก / เลขคี่ / โอกาส", type: "adj."}, {en: "ongoing", th: "กำลังดำเนินการ / ต่อเนื่อง", type: "adj."}, {en: "panel", th: "คณะผู้อภิปราย / แผงควบคุม", type: "n."}, {en: "persistent", th: "ดื้อรั้น / คงอยู่ / เรื้อรัง", type: "adj."}, {en: "posed", th: "วางท่า / ตั้งคำถาม / ก่อให้เกิด", type: "v."},
+            {en: "reluctance", th: "ความไม่เต็มใจ / ความอิดออด", type: "n."}, {en: "so-called", th: "ที่เรียกกันว่า (มักใช้ในแง่ลบ)", type: "adj."}, {en: "straightforward", th: "ตรงไปตรงมา / ง่ายๆ", type: "adj."}, {en: "undergo", th: "ประสบ / ผ่าน (ประสบการณ์)", type: "v."}, {en: "whereby", th: "โดยที่ / ซึ่งด้วยเหตุนั้น", type: "adv."}
+        ];
+
+        // --- Global State ---
+        let gameWords = [];
+        let wrongWords = []; 
+        let currentIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let currentQuestion = null;
+        let isQuestionEnglish = true;
+        let hintUsed = false;
+        let canAnswer = true;
+        let isReviewMode = false;
+
+        // --- Study Mode State ---
+        let studyWords = [];
+        let studyIndex = 0;
+        let isFlipped = false;
+        let isShuffled = false;
+
+        // --- DOM Elements ---
+        const modeSelection = document.getElementById('mode-selection');
+        const gameArea = document.getElementById('game-area');
+        const studyArea = document.getElementById('study-area');
+        const resultArea = document.getElementById('result-area');
+        const gameStats = document.getElementById('game-stats');
+        const dictionaryArea = document.getElementById('dictionary-area');
+        const statsArea = document.getElementById('stats-area');
+
+        // Dictionary Elements
+        const dictTableBody = document.getElementById('dict-table-body');
+        const dictSearch = document.getElementById('dict-search');
+        const noResultMsg = document.getElementById('no-result-msg');
+
+        // Stats Elements
+        const statsContent = document.getElementById('stats-content');
+
+        // Game Elements
+        const questionText = document.getElementById('question-text');
+        const instructionText = document.getElementById('instruction-text');
+        const answerInput = document.getElementById('answer-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const hintBtn = document.getElementById('hint-btn');
+        const speakBtn = document.getElementById('speak-btn');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const statusIcon = document.getElementById('status-icon');
+        const scoreVal = document.getElementById('score-val');
+        const streakVal = document.getElementById('streak-val');
+        const progressVal = document.getElementById('progress-val');
+        const quizBadge = document.getElementById('quiz-badge');
+
+        // Study Elements
+        const flashcardInner = document.getElementById('flashcard-inner');
+        const studyWordEn = document.getElementById('study-word-en');
+        const studyWordTh = document.getElementById('study-word-th');
+        const studyWordType = document.getElementById('study-word-type');
+        const studyProgress = document.getElementById('study-progress');
+        const shuffleStatus = document.getElementById('shuffle-status');
+
+        // Result Elements
+        const wrongCountEl = document.getElementById('wrong-count');
+        const reviewBtn = document.getElementById('review-mistakes-btn');
+        const resultTitle = document.getElementById('result-title');
+
+        // --- Local Storage Logic for Mistakes ---
+        const getMistakes = () => JSON.parse(localStorage.getItem('awl_mistakes') || '{}');
+        const addMistake = (wordEn) => {
+            const mistakes = getMistakes();
+            mistakes[wordEn] = (mistakes[wordEn] || 0) + 1;
+            localStorage.setItem('awl_mistakes', JSON.stringify(mistakes));
+        };
+        const clearStatsData = () => {
+            localStorage.removeItem('awl_mistakes');
+            renderStats(); // Refresh UI
+        };
+
+        // --- Initialization & Mode Switching ---
+        
+        window.goHome = () => {
+            // Hide all areas
+            gameArea.classList.add('hidden');
+            studyArea.classList.add('hidden');
+            resultArea.classList.add('hidden');
+            dictionaryArea.classList.add('hidden');
+            statsArea.classList.add('hidden');
+            
+            modeSelection.classList.remove('hidden');
+            modeSelection.classList.add('bounce-in');
+            gameStats.classList.add('hidden');
+        };
+
+        window.startOverviewMode = () => {
+            modeSelection.classList.add('hidden');
+            dictionaryArea.classList.remove('hidden');
+            dictionaryArea.classList.add('bounce-in');
+            renderDictionary();
+        };
+
+        window.startStatsMode = () => {
+            modeSelection.classList.add('hidden');
+            statsArea.classList.remove('hidden');
+            statsArea.classList.add('bounce-in');
+            renderStats();
+        };
+
+        window.startGame = (count) => {
+            isReviewMode = false;
+            const shuffled = [...academicWordList].sort(() => 0.5 - Math.random());
+            gameWords = shuffled.slice(0, Math.min(count, academicWordList.length));
+            resetGameVariables();
+            updateUIForGame();
+        };
+
+        window.startMistakeReview = () => {
+            if (wrongWords.length === 0) return;
+            isReviewMode = true;
+            gameWords = [...wrongWords]; 
+            resetGameVariables();
+            updateUIForGame();
+            quizBadge.textContent = "Review Mode";
+            quizBadge.classList.replace('text-indigo-400', 'text-red-500');
+            quizBadge.classList.replace('bg-indigo-50', 'bg-red-50');
+        };
+
+        function resetGameVariables() {
+            if(isReviewMode) wrongWords = []; 
+            currentIndex = 0;
+            score = 0;
+            streak = 0;
+            updateStats();
+            loadQuestion();
+        }
+
+        function updateUIForGame() {
+            modeSelection.classList.add('hidden');
+            studyArea.classList.add('hidden');
+            resultArea.classList.add('hidden');
+            dictionaryArea.classList.add('hidden');
+            statsArea.classList.add('hidden');
+            
+            gameArea.classList.remove('hidden');
+            gameArea.classList.add('bounce-in');
+            gameStats.classList.remove('hidden');
+            
+            if(!isReviewMode) {
+                quizBadge.textContent = "Quiz Mode";
+                quizBadge.classList.remove('text-red-500', 'bg-red-50');
+                quizBadge.classList.add('text-indigo-400', 'bg-indigo-50');
+            }
+        }
+
+        window.startStudyMode = () => {
+            studyWords = isShuffled ? [...academicWordList].sort(() => 0.5 - Math.random()) : [...academicWordList];
+            studyIndex = 0;
+            isFlipped = false;
+
+            modeSelection.classList.add('hidden');
+            gameArea.classList.add('hidden');
+            studyArea.classList.remove('hidden');
+            studyArea.classList.add('bounce-in');
+            gameStats.classList.add('hidden');
+
+            renderStudyCard();
+        };
+
+        // --- Dictionary & Stats Render Logic ---
+
+        window.renderDictionary = () => {
+            const searchTerm = dictSearch.value.toLowerCase();
+            const filteredWords = academicWordList.filter(w => 
+                w.en.toLowerCase().includes(searchTerm) || 
+                w.th.includes(searchTerm)
+            );
+
+            dictTableBody.innerHTML = '';
+            if (filteredWords.length === 0) {
+                noResultMsg.classList.remove('hidden');
+            } else {
+                noResultMsg.classList.add('hidden');
+                filteredWords.forEach(word => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-gray-50 transition border-b";
+                    const typeClass = getTypeColorClass(word.type);
+                    row.innerHTML = `
+                        <td class="p-3 font-bold text-indigo-900">${word.en}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${typeClass}">${word.type}</span></td>
+                        <td class="p-3 text-gray-600">${word.th}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="window.speakText('${word.en}')" class="text-gray-400 hover:text-indigo-600">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                        </td>
+                    `;
+                    dictTableBody.appendChild(row);
+                });
+            }
+        };
+
+        window.filterDictionary = () => {
+            renderDictionary();
+        };
+
+        window.speakText = (text) => {
+            speakWord(text);
+        };
+
+        window.renderStats = () => {
+            const mistakes = getMistakes();
+            // Convert to array and sort
+            const mistakeArray = Object.keys(mistakes).map(key => ({
+                en: key,
+                count: mistakes[key]
+            })).sort((a, b) => b.count - a.count);
+
+            statsContent.innerHTML = '';
+
+            if (mistakeArray.length === 0) {
+                statsContent.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
+                        <i class="fas fa-check-circle text-4xl mb-2 text-green-300"></i>
+                        <p>ยังไม่มีข้อมูลคำที่ผิด</p>
+                        <p class="text-xs">เล่นเกมเพื่อเริ่มสะสมสถิติ</p>
+                    </div>`;
+                return;
+            }
+
+            mistakeArray.forEach((item, index) => {
+                // Find full word data
+                const wordData = academicWordList.find(w => w.en === item.en) || { th: "ไม่ทราบความหมาย", type: "?" };
+                const rankColor = index < 3 ? "text-red-600 bg-red-50" : "text-gray-600 bg-gray-50";
+                
+                const div = document.createElement('div');
+                div.className = "flex items-center p-3 mb-2 rounded-xl bg-white border border-gray-100 shadow-sm";
+                div.innerHTML = `
+                    <div class="w-8 h-8 flex items-center justify-center rounded-full font-bold mr-3 ${rankColor}">${index + 1}</div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-gray-800">${item.en}</span>
+                            <span class="text-xs text-gray-400">(${wordData.type})</span>
+                        </div>
+                        <div class="text-sm text-gray-500">${wordData.th}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">ผิด</div>
+                        <div class="font-bold text-red-500">${item.count} ครั้ง</div>
+                    </div>
+                `;
+                statsContent.appendChild(div);
+            });
+        };
+
+        window.clearStats = () => {
+            if(confirm("ต้องการล้างประวัติคำที่ผิดทั้งหมดใช่หรือไม่?")) {
+                clearStatsData();
+            }
+        };
+
+
+        // --- Helper: Color Coding ---
+        function getTypeColorClass(type) {
+            const cleanType = (type || '').replace(/[().]/g, '').trim();
+            if (cleanType === 'n') return 'text-blue-600 bg-blue-50';
+            if (cleanType === 'v') return 'text-red-600 bg-red-50';
+            if (cleanType === 'adj') return 'text-green-600 bg-green-50';
+            if (cleanType === 'adv') return 'text-purple-600 bg-purple-50';
+            return 'text-gray-500 bg-gray-100';
+        }
+
+        // --- Game Logic ---
+        function loadQuestion() {
+            if (currentIndex >= gameWords.length) {
+                endGame();
+                return;
+            }
+
+            canAnswer = true;
+            hintUsed = false;
+            currentQuestion = gameWords[currentIndex];
+            isQuestionEnglish = Math.random() > 0.4; 
+
+            // Reset UI
+            answerInput.value = '';
+            answerInput.classList.remove('border-red-500', 'border-green-500', 'bg-red-50', 'bg-green-50', 'shake');
+            answerInput.classList.add('border-gray-200', 'bg-gray-50');
+            statusIcon.classList.add('hidden');
+            feedbackMsg.style.opacity = '0';
+            hintBtn.disabled = false;
+            hintBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            if (isQuestionEnglish) {
+                questionText.textContent = currentQuestion.en;
+                const typeClass = getTypeColorClass(currentQuestion.type || 'word');
+                instructionText.innerHTML = `คำแปลภาษาไทยคืออะไร? <span class="text-xs px-2 py-1 rounded font-bold ${typeClass}">${currentQuestion.type || 'word'}</span>`;
+                answerInput.placeholder = "พิมพ์คำแปลภาษาไทย...";
+            } else {
+                questionText.textContent = currentQuestion.th;
+                const typeClass = getTypeColorClass(currentQuestion.type || 'word');
+                instructionText.innerHTML = `คำศัพท์ภาษาอังกฤษคืออะไร? <span class="text-xs px-2 py-1 rounded font-bold ${typeClass}">${currentQuestion.type || 'word'}</span>`;
+                answerInput.placeholder = "Type the English word...";
+            }
+
+            progressVal.textContent = `${currentIndex + 1}/${gameWords.length}`;
+            setTimeout(() => answerInput.focus(), 100);
+        }
+
+        function checkAnswer() {
+            if (!canAnswer) return;
+            
+            const userAns = answerInput.value.trim().toLowerCase();
+            if (!userAns) return;
+
+            canAnswer = false;
+            let correctAns = isQuestionEnglish ? currentQuestion.th : currentQuestion.en;
+            
+            const isCorrect = userAns === correctAns.toLowerCase() || (isQuestionEnglish && correctAns.includes(userAns));
+
+            if (isCorrect) {
+                handleCorrect();
+            } else {
+                handleWrong(correctAns);
+            }
+        }
+
+        function handleCorrect() {
+            speakWord(currentQuestion.en);
+            
+            answerInput.classList.remove('border-gray-200', 'bg-gray-50');
+            answerInput.classList.add('border-green-500', 'bg-green-50');
+            statusIcon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+            statusIcon.classList.remove('hidden');
+            statusIcon.classList.add('pop');
+
+            feedbackMsg.textContent = "เยี่ยมมาก! ถูกต้องครับ 🎉";
+            feedbackMsg.className = "h-8 text-center font-bold text-lg text-green-600 transition-all duration-300 transform translate-y-0";
+            feedbackMsg.style.opacity = '1';
+
+            const points = hintUsed ? 5 : 10;
+            score += points;
+            streak++;
+            updateStats();
+
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function handleWrong(correctAnswer) {
+            // Track Mistake Locally
+            addMistake(currentQuestion.en);
+            wrongWords.push(currentQuestion);
+
+            answerInput.classList.remove('border-gray-200', 'bg-gray-50');
+            answerInput.classList.add('border-red-500', 'bg-red-50', 'shake');
+            statusIcon.innerHTML = '<i class="fas fa-times-circle text-red-500"></i>';
+            statusIcon.classList.remove('hidden');
+            
+            feedbackMsg.innerHTML = `ผิดครับ! คำตอบคือ <span class="text-indigo-600 font-extrabold underline">${correctAnswer}</span>`;
+            feedbackMsg.className = "h-8 text-center font-bold text-lg text-red-500 transition-all duration-300 transform translate-y-0";
+            feedbackMsg.style.opacity = '1';
+
+            streak = 0;
+            updateStats();
+
+            setTimeout(() => {
+                answerInput.classList.remove('shake');
+                currentIndex++;
+                loadQuestion();
+            }, 3500); 
+        }
+
+        function useHint() {
+            if (hintUsed) return;
+            hintUsed = true;
+            
+            let hintText = "";
+            if (isQuestionEnglish) {
+                hintText = `ขึ้นต้นด้วย "${currentQuestion.th.charAt(0)}..."`;
+            } else {
+                hintText = `Starts with "${currentQuestion.en.substring(0, 2)}..."`;
+            }
+            
+            feedbackMsg.textContent = hintText;
+            feedbackMsg.className = "h-8 text-center font-bold text-lg text-yellow-600 animate-pulse";
+            feedbackMsg.style.opacity = '1';
+            
+            hintBtn.disabled = true;
+            hintBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        function updateStats() {
+            scoreVal.textContent = score;
+            streakVal.textContent = streak;
+        }
+
+        function endGame() {
+            gameArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('bounce-in');
+            
+            document.getElementById('final-score').textContent = score;
+            const maxPossible = gameWords.length * 10;
+            const accuracy = Math.round((score / maxPossible) * 100);
+            document.getElementById('final-accuracy').textContent = `${accuracy}%`;
+            
+            wrongCountEl.textContent = wrongWords.length;
+            if (wrongWords.length > 0) {
+                reviewBtn.classList.remove('hidden');
+                resultTitle.textContent = "สู้ต่อไป!";
+                document.getElementById('result-subtitle').textContent = `คุณมีคำที่ต้องทบทวน ${wrongWords.length} คำ`;
+            } else {
+                reviewBtn.classList.add('hidden');
+                resultTitle.textContent = "ยอดเยี่ยมมาก!";
+                document.getElementById('result-subtitle').textContent = "ไม่มีคำผิดเลย! สุดยอด!";
+            }
+            
+            saveScore(score);
+        }
+
+        // --- Study Mode Logic ---
+        window.renderStudyCard = () => {
+            const word = studyWords[studyIndex];
+            studyWordEn.textContent = word.en;
+            studyWordTh.textContent = word.th;
+            
+            // Color Coding for Type
+            const typeClass = getTypeColorClass(word.type || 'word');
+            studyWordType.className = `px-3 py-1 rounded-full text-sm font-semibold mt-2 ${typeClass}`;
+            studyWordType.textContent = `(${word.type || 'word'})`;
+            
+            studyProgress.textContent = `Card ${studyIndex + 1} / ${studyWords.length}`;
+            
+            // Reset Flip
+            isFlipped = false;
+            flashcardInner.classList.remove('rotate-y-180');
+        };
+
+        window.flipCard = () => {
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flashcardInner.classList.add('rotate-y-180');
+            } else {
+                flashcardInner.classList.remove('rotate-y-180');
+            }
+        };
+
+        window.nextStudyCard = () => {
+            if (studyIndex < studyWords.length - 1) {
+                studyIndex++;
+            } else {
+                studyIndex = 0; // Loop back
+            }
+            renderStudyCard();
+        };
+
+        window.prevStudyCard = () => {
+            if (studyIndex > 0) {
+                studyIndex--;
+            } else {
+                studyIndex = studyWords.length - 1; // Loop to end
+            }
+            renderStudyCard();
+        };
+
+        window.toggleShuffle = () => {
+            isShuffled = !isShuffled;
+            shuffleStatus.textContent = isShuffled ? "เปิด" : "ปิด";
+            if (isShuffled) {
+                studyWords = [...academicWordList].sort(() => 0.5 - Math.random());
+            } else {
+                studyWords = [...academicWordList];
+            }
+            studyIndex = 0;
+            renderStudyCard();
+        };
+
+        window.speakCurrentStudyWord = () => {
+            speakWord(studyWords[studyIndex].en);
+        };
+        
+        window.speakStudyWord = () => {
+            speakWord(studyWords[studyIndex].en);
+        };
+
+        // --- Text to Speech ---
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Event Listeners ---
+        submitBtn.addEventListener('click', checkAnswer);
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAnswer();
+        });
+        hintBtn.addEventListener('click', () => {
+            useHint();
+            answerInput.focus();
+        });
+        speakBtn.addEventListener('click', () => {
+            speakWord(currentQuestion.en);
+            answerInput.focus();
+        });
+
+        // --- Firebase Init ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        if (firebaseConfig.apiKey) {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default';
+
+            signInAnonymously(auth).then(() => {
+                console.log("Firebase Connected");
+            }).catch(err => console.log("Offline Mode"));
+            
+            window.saveScore = async (finalScore) => {
+                const user = auth.currentUser;
+                if (user) {
+                    try {
+                        await setDoc(doc(db, `artifacts/${appId}/users/${user.uid}/scores`, 'latest'), {
+                            score: finalScore,
+                            date: new Date()
+                        });
+                    } catch(e) { console.error(e); }
+                }
+            };
+        } else {
+            window.saveScore = () => {}; 
+        }
+
+    </script>
+</body>
+</html>
